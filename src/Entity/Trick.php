@@ -33,6 +33,9 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'trick_id', targetEntity: TrickFile::class, orphanRemoval: true)]
     private Collection $files;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
@@ -117,6 +120,18 @@ class Trick
                 $file->setTrickId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

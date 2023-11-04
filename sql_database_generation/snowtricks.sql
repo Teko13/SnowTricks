@@ -25,6 +25,7 @@ CREATE TABLE `trick` (
     description TEXT,
     author INT NOT NULL,
     groupe_id INT NOT NULL,
+    slug VARCHAR(255) NOT NULL,
     FOREIGN KEY (author) REFERENCES user(id),
     FOREIGN KEY (groupe_id) REFERENCES groupe(id),
     UNIQUE (name)

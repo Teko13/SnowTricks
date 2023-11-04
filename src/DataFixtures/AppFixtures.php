@@ -6,11 +6,16 @@ use App\Entity\Groupe;
 use App\Entity\Trick;
 use App\Entity\TrickFile;
 use App\Entity\User;
+use App\Sluger\Sluger;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
+    private Sluger $sluger;
+    public function __construct(Sluger $sluger) {
+        $this->sluger = $sluger;
+    }
     public function load(ObjectManager $manager): void
     {
         $snowboardTricks = [
@@ -120,6 +125,7 @@ class AppFixtures extends Fixture
             $trick = new Trick;
         $trick->setAuthor($user)
         ->setName($i["name"])
+        ->setSlug($this->sluger->slugify($trick->getName()))
         ->setDescription($i["description"])
         ->setGroupeId($groupe);
         $manager->persist($trick);
