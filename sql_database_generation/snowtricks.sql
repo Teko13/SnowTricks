@@ -1,10 +1,10 @@
-DROP SCHEMA IF EXISTS SnowTriks;
-CREATE SCHEMA SnowTriks;
+DROP SCHEMA IF EXISTS snowTriks;
+CREATE SCHEMA snowTriks;
 
-USE SnowTriks;
+USE snowTriks;
 
 -- Création de la table 'user'
-CREATE TABLE user (
+CREATE TABLE `user` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -13,25 +13,26 @@ CREATE TABLE user (
 );
 
 -- Création de la table 'group'
-CREATE TABLE groupes (
+CREATE TABLE `groupe` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL
 );
 
 -- Création de la table 'trick'
-CREATE TABLE trick (
+CREATE TABLE `trick` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     author INT NOT NULL,
-    group_id INT NOT NULL,
+    groupe_id INT NOT NULL,
+    slug VARCHAR(255) NOT NULL,
     FOREIGN KEY (author) REFERENCES user(id),
-    FOREIGN KEY (group_id) REFERENCES groupes(id),
+    FOREIGN KEY (groupe_id) REFERENCES groupe(id),
     UNIQUE (name)
 );
 
 -- Création de la table 'comment'
-CREATE TABLE comment (
+CREATE TABLE `comment` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
@@ -42,7 +43,7 @@ CREATE TABLE comment (
 );
 
 -- Création de la table 'file'
-CREATE TABLE trick_file (
+CREATE TABLE `trick_file` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     path VARCHAR(255) NOT NULL,
     type_file VARCHAR(255) NOT NULL,
@@ -50,7 +51,7 @@ CREATE TABLE trick_file (
     FOREIGN KEY (trick_id) REFERENCES trick(id) ON DELETE CASCADE
 );
 
-CREATE TABLE user_file (
+CREATE TABLE `user_file` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     path VARCHAR(255) NOT NULL,
     user_id INT NOT NULL,
