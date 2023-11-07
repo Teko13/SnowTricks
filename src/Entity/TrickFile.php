@@ -23,6 +23,9 @@ class TrickFile
     #[ORM\JoinColumn(name: "trick_id", referencedColumnName: "id", nullable: false)]
     private ?Trick $trick_id = null;
 
+    #[ORM\Column]
+    private ?bool $featured_image = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class TrickFile
     public function setTrickId(?Trick $trick_id): static
     {
         $this->trick_id = $trick_id;
+
+        return $this;
+    }
+
+    public function isFeaturedImage(): ?bool
+    {
+        return $this->featured_image;
+    }
+
+    public function setFeaturedImage(bool $featured_image): static
+    {
+        $this->featured_image = $featured_image;
 
         return $this;
     }

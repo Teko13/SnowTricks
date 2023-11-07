@@ -36,6 +36,12 @@ class Trick
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $update_at = null;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
@@ -132,6 +138,30 @@ class Trick
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeInterface
+    {
+        return $this->update_at;
+    }
+
+    public function setUpdateAt(\DateTimeInterface $update_at): static
+    {
+        $this->update_at = $update_at;
 
         return $this;
     }

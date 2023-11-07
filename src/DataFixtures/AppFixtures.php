@@ -37,13 +37,16 @@ class AppFixtures extends Fixture
         ->setName($i->name)
         ->setSlug($this->sluger->slugify($trick->getName()))
         ->setDescription($i->description)
-        ->setGroupeId($groupe);
+        ->setGroupeId($groupe)
+        ->setCreatedAt(new \DateTime)
+        ->setUpdateAt(new \DateTime);
         $manager->persist($trick);
-        foreach($i->images as $im) {
+        for($c = 0; $c < count($i->images); $c++) {
             $trickFile = new TrickFile;
-        $trickFile->setPath($im)
+        $trickFile->setPath($i->images[$c])
         ->setTrickId($trick)
         ->setTypeFile("image");
+        $trickFile->setFeaturedImage($c === 0);
         $manager->persist($trickFile);
         }
         }

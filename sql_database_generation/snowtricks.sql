@@ -24,6 +24,8 @@ CREATE TABLE `trick` (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     author INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     groupe_id INT NOT NULL,
     slug VARCHAR(255) NOT NULL,
     FOREIGN KEY (author) REFERENCES user(id),
@@ -48,6 +50,7 @@ CREATE TABLE `trick_file` (
     path VARCHAR(255) NOT NULL,
     type_file VARCHAR(255) NOT NULL,
     trick_id INT NOT NULL,
+    featured_image BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (trick_id) REFERENCES trick(id) ON DELETE CASCADE
 );
 
