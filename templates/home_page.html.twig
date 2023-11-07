@@ -2,13 +2,13 @@
 {% block body %}
 <h1 class="mb-2">Liste des figures</h1>
 <div class="row">
-    {% for t in tricks %}
+    {% for trick in tricks %}
         <div class="col-md-4">
         <div class="card">
-        <img src={{t.trick_img.path}} alt="Snowbord image" class="img-fluid">
+        <img src={{trick.files[0].path}} alt="Snowbord image" class="img-fluid">
         <div class="card-body">
-        <a href={{t.trick.slug}}>
-        <h4 class="card-title">{{t.trick.name}}</h4>
+        <a href={{trick.slug}}>
+        <h4 class="card-title">{{trick.name}}</h4>
         </a>
         </div>
         </div>
