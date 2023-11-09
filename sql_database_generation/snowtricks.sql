@@ -36,9 +36,9 @@ CREATE TABLE `trick` (
 -- Création de la table 'comment'
 CREATE TABLE `comment` (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    content TEXT,
-    author INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    content TEXT NOT NULL,
+    author INT NOT NULL,
     trick_id INT,
     FOREIGN KEY (author) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (trick_id) REFERENCES trick(id) ON DELETE CASCADE

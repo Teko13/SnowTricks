@@ -60,6 +60,26 @@
         </ul>
     </div>
     <div class="comment">
-        <h2>Commentaire</h2>
+        <h2>Commentaires</h2>
+        <div class="comments-container">
+            {% for comment in trick.comments %}
+                <div class="comment-content">
+                    <div class="avatar">
+                        <img src={{comment.author.avatar.path}} alt="image de l'auteur">
+                    </div>
+                    <div class="comment-infos">
+                        <div class="user-name bg-primary text-light">
+                            {{trick.author.userName}}
+                        </div>
+                        <div class="content">
+                        {{comment.content}}
+                    </div>
+                    <div class="date text-primary">
+                        {{comment.createdAt|date("d-m-Y H:i:s")}}
+                    </div>
+                    </div>
+                </div>
+        {% endfor %}
+        </div>
     </div>
 {% endblock %}

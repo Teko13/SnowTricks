@@ -2,10 +2,12 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Comment;
 use App\Entity\Groupe;
 use App\Entity\Trick;
 use App\Entity\TrickFile;
 use App\Entity\User;
+use App\Entity\UserFile;
 use App\Sluger\Sluger;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -28,6 +30,10 @@ class AppFixtures extends Fixture
         ->setPassword("teko")
         ->setValide(true);
         $manager->persist($user);
+        $userFile = new UserFile;
+        $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
+        ->setUserId($user);
+        $manager->persist($userFile);
         $groupe = new Groupe;
         $groupe->setName("A");
         $manager->persist($groupe);
@@ -51,6 +57,14 @@ class AppFixtures extends Fixture
             $trickFile->setTypeFile("video");
         }
         $manager->persist($trickFile);
+        }
+        for($cmt = 0; $cmt < 10; $cmt++) {
+            $comment = new Comment;
+            $comment->setAuthor($user)
+            ->setCreatedAt(new \DateTime)
+            ->setTrickId($trick)
+            ->setContent("lorem smklkdl sdmnkcdn ejkldczkc dklsjcsklsmkl dsmlkjdslkcdsq smjklcq dsmjcjklqdmilkjc sdkjcqksmldj ksmdjcj skl");
+            $manager->persist($comment);
         }
         }
         $manager->flush();
