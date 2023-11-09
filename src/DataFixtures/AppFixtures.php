@@ -45,8 +45,11 @@ class AppFixtures extends Fixture
             $trickFile = new TrickFile;
         $trickFile->setPath($i->images[$c])
         ->setTrickId($trick)
-        ->setTypeFile("image");
-        $trickFile->setFeaturedImage($c === 0);
+        ->setTypeFile("image")
+        ->setFeaturedImage($c === 0);
+        if($c > 4) {
+            $trickFile->setTypeFile("video");
+        }
         $manager->persist($trickFile);
         }
         }

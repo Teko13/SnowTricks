@@ -15,6 +15,6 @@ class TrickController extends AbstractController {
     #[Route('/trick/{slug}',name: "trick_show")]
     function trickShow(Trick $trick): Response
     {
-        dd($trick);
+        return $this->render("details.html.twig", compact("trick"));
     }
 }

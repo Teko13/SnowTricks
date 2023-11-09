@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TrickFileRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TrickFileRepository::class)]
@@ -16,7 +17,7 @@ class TrickFile
     #[ORM\Column(length: 255)]
     private ?string $type_file = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $path = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]

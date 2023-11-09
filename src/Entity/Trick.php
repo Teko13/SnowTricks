@@ -107,6 +107,15 @@ class Trick
     {
         return $this->files;
     }
+    public function getFeaturedImage(): TrickFile|null
+    {
+        foreach($this->files as $file) {
+            if ($file->isFeaturedImage()) {
+                return $file;
+            }
+        }
+        return null;
+    }
 
     public function addFile(TrickFile $file): static
     {

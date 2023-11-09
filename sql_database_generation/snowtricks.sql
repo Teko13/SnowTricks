@@ -47,7 +47,7 @@ CREATE TABLE `comment` (
 -- Création de la table 'file'
 CREATE TABLE `trick_file` (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    path VARCHAR(255) NOT NULL,
+    path TEXT NOT NULL,
     type_file VARCHAR(255) NOT NULL,
     trick_id INT NOT NULL,
     featured_image BOOLEAN NOT NULL DEFAULT FALSE,
