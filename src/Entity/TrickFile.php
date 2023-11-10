@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TrickFileRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TrickFileRepository::class)]
@@ -16,12 +17,15 @@ class TrickFile
     #[ORM\Column(length: 255)]
     private ?string $type_file = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $path = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(name: "trick_id", referencedColumnName: "id", nullable: false)]
     private ?Trick $trick_id = null;
+
+    #[ORM\Column]
+    private ?bool $featured_image = null;
 
     public function getId(): ?int
     {
@@ -60,6 +64,18 @@ class TrickFile
     public function setTrickId(?Trick $trick_id): static
     {
         $this->trick_id = $trick_id;
+
+        return $this;
+    }
+
+    public function isFeaturedImage(): ?bool
+    {
+        return $this->featured_image;
+    }
+
+    public function setFeaturedImage(bool $featured_image): static
+    {
+        $this->featured_image = $featured_image;
 
         return $this;
     }

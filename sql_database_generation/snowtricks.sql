@@ -24,6 +24,8 @@ CREATE TABLE `trick` (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     author INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     groupe_id INT NOT NULL,
     slug VARCHAR(255) NOT NULL,
     FOREIGN KEY (author) REFERENCES user(id),
@@ -34,9 +36,9 @@ CREATE TABLE `trick` (
 -- Création de la table 'comment'
 CREATE TABLE `comment` (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    content TEXT,
-    author INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    content TEXT NOT NULL,
+    author INT NOT NULL,
     trick_id INT,
     FOREIGN KEY (author) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (trick_id) REFERENCES trick(id) ON DELETE CASCADE
@@ -45,9 +47,10 @@ CREATE TABLE `comment` (
 -- Création de la table 'file'
 CREATE TABLE `trick_file` (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    path VARCHAR(255) NOT NULL,
+    path TEXT NOT NULL,
     type_file VARCHAR(255) NOT NULL,
     trick_id INT NOT NULL,
+    featured_image BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (trick_id) REFERENCES trick(id) ON DELETE CASCADE
 );
 

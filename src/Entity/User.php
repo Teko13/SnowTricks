@@ -30,9 +30,16 @@ class User
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Trick::class, orphanRemoval: true)]
     private Collection $tricks;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
+
+    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
+    private ?UserFile $avatar = null;
+
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +121,53 @@ class User
                 $trick->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAvatar(): ?UserFile
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(UserFile $avatar): static
+    {
+        // set the owning side of the relation if necessary
+        if ($avatar->getUserId() !== $this) {
+            $avatar->setUserId($this);
+        }
+
+        $this->avatar = $avatar;
 
         return $this;
     }

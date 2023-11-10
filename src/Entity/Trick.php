@@ -36,9 +36,19 @@ class Trick
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $update_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'trick_id', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,6 +111,15 @@ class Trick
     {
         return $this->files;
     }
+    public function getFeaturedImage(): TrickFile|null
+    {
+        foreach($this->files as $file) {
+            if ($file->isFeaturedImage()) {
+                return $file;
+            }
+        }
+        return null;
+    }
 
     public function addFile(TrickFile $file): static
     {
@@ -132,6 +151,60 @@ class Trick
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeInterface
+    {
+        return $this->update_at;
+    }
+
+    public function setUpdateAt(\DateTimeInterface $update_at): static
+    {
+        $this->update_at = $update_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setTrickId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getTrickId() === $this) {
+                $comment->setTrickId(null);
+            }
+        }
 
         return $this;
     }
