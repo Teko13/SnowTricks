@@ -11,12 +11,14 @@ use App\Entity\UserFile;
 use App\Sluger\Sluger;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $hasher;
     private Sluger $sluger;
-    public function __construct(Sluger $sluger) {
+    public function __construct(Sluger $sluger, UserPasswordHasherInterface $hasher) {
         $this->sluger = $sluger;
+        $this->hasher = $hasher;
     }
     public function load(ObjectManager $manager): void
     {
@@ -24,15 +26,36 @@ class AppFixtures extends Fixture
         $snowboardTricks = json_decode(file_get_contents($dataJsonFilePath));
         
         
+        $admin = new User;
+        $admin->setEmail("admin@gmail.com")
+        ->setUserName("admin")
+        ->setPassword($this->hasher->hashPassword($admin, "admin"))
+        ->setValide(true)
+        ->setRoles(["ROLE_ADMIN"]);
+        $manager->persist($admin);
+        $userFile = new UserFile;
+        $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
+        ->setUserId($admin);
+        $manager->persist($userFile);
         $user = new User;
         $user->setEmail("ffabrice999@gmail.com")
         ->setUserName("teko13")
-        ->setPassword("teko")
+        ->setPassword($this->hasher->hashPassword($user, "teko"))
         ->setValide(true);
         $manager->persist($user);
         $userFile = new UserFile;
         $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
         ->setUserId($user);
+        $manager->persist($userFile);
+        $user1 = new User;
+        $user1->setEmail("user1@gmail.com")
+        ->setUserName("user1")
+        ->setPassword($this->hasher->hashPassword($user, "user"))
+        ->setValide(true);
+        $manager->persist($user1);
+        $userFile = new UserFile;
+        $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
+        ->setUserId($user1);
         $manager->persist($userFile);
         $groupe = new Groupe;
         $groupe->setName("A");
@@ -70,3 +93,5 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 }
+
+
