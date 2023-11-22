@@ -9,7 +9,10 @@ CREATE TABLE `user` (
     user_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    valide BOOLEAN NOT NULL DEFAULT FALSE
+    roles JSON NOT NULL,
+    valide BOOLEAN NOT NULL DEFAULT FALSE,
+    is_verified BOOLEAN NOT NULL,
+    UNIQUE (user_name)
 );
 
 -- Création de la table 'group'
