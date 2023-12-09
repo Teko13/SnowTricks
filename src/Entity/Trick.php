@@ -30,7 +30,7 @@ class Trick
     #[ORM\JoinColumn(name: "groupe_id", referencedColumnName: "id", nullable: false)]
     private ?Groupe $groupe_id = null;
 
-    #[ORM\OneToMany(mappedBy: 'trick_id', targetEntity: TrickFile::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'trick_id', targetEntity: TrickFile::class, cascade:["persist"], orphanRemoval: true)]
     private Collection $files;
 
     #[ORM\Column(length: 255)]
