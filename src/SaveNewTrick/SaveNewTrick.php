@@ -54,4 +54,46 @@ class SaveNewTrick extends AbstractController
         $flashBag->set("alert-success", "La figure a bien été créée");
         return $this->redirect("/");
     }
+    public function updateTrick(Trick $trick, Trick $formData, Session $session): Response
+    {
+        $trickRepos = $this->em->getRepository(Trick::class);
+        $updateTrick = $trickRepos->findOneBy(["id"=>$trick->getId()]);
+        $flashBag = $session->getBag("flashes");
+        $updateTrick->setName($formData->getName())
+            ->setDescription($formData->getDescription())
+            ->setSlug($this->sluger->slugify($formData->getName()))
+            ->setCreatedAt($trick->getCreatedAt())
+            ->setUpdateAt(new \DateTime)
+            ->setGroupeId($formData->getGroupeId())
+            ->setAuthor($this->getUser());
+            // add if new trick file, add them to updateTrick
+            foreach($trick->files() as $file) {
+                if(!in_array($file, $updateTrick->files()->toArray(), true)) {
+                  $updateTrick->addFile($file);  
+                }
+            }
+            foreach($updateTrick->files() as $file) {
+                if(!in_array($file, $trick->files()->toArray(), true)) {
+                    $updateTrick->removeFile($file);
+                }
+            }
+
+        if (!$updateTrick->getFeaturedImage()) {
+            $session->set("trick", $trick);
+            $flashBag->set("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
+            return $this->redirect("/create/trick");
+        }
+        $this->em->persist($updateTrick);
+        $this->em->flush();
+
+        $flashBag = $session->getFlashBag();
+        $session->remove("trick_edition");
+        $flashBag->set("alert-success", "La figure a bien été créée");
+        return $this->redirect("/");
+    }
+    public function deleteTrick(Trick $trick): void
+    {
+        $this->em->remove($trick);
+        $this->em->flush();
+    }
 }

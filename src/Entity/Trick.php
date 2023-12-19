@@ -107,7 +107,7 @@ class Trick
     /**
      * @return Collection<int, TrickFile>
      */
-    public function getFiles(): Collection
+    public function files(): Collection
     {
         return $this->files;
     }

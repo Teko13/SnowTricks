@@ -1,21 +1,5 @@
 {% extends "base.html.twig" %}
 {% block body %}
-	<div class="modal" id="myModal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true"></span>
-					</button>
-				</div>
-				<div class="modal-body"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary">Save changes</button>
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="trck_header">
 		<div class="featured_img">
 			<div class="img_container">
@@ -24,14 +8,17 @@
 			<h1 class="trick_name">
 				{{trick.name}}
 			</h1>
-			<div class="edit-btn">
-				<a href="#" class="bg-primary">
-					<i class="fas fa-pencil-alt"></i>
-				</a>
-				<a href="#" class="bg-danger">
-					<i class="fas fa-trash-alt"></i>
-				</a>
-			</div>
+			{% if app.user == trick.author %}
+				<div class="edit-btn">
+					<a href="/edit/trick/{{trick.slug}}" class="bg-primary">
+						<i class="fas fa-pencil-alt"></i>
+					</a>
+					<button data-bs-toggle="modal" data-bs-target="#deleteTrick" class="bg-danger">
+						<i class="fas fa-trash-alt"></i>
+					</button>
+				</div>
+			{% endif %}
+
 		</div>
 	</div>
 	<div class="trick_files">
@@ -90,4 +77,23 @@
 			{% endfor %}
 		</div>
 	</div>
+	<div class="modal" id="deleteTrick">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Voulez-vous vraiment supprimer cette figure ?
+				</div>
+				<div class="modal-footer">
+					<a href="/delete/trick/{{trick.slug}}" class="btn btn-danger">Oui</a>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 {% endblock %}
