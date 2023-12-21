@@ -26,7 +26,7 @@
 
 			</div>
 			<h4 class="trick_name">
-				{{ form_row(detailsForm.name) }}
+				{{ form_widget(detailsForm.name, {'attr':{'value': trick.name | default("")}}) }}
 			</h4>
 			<div class="edit-btn">
 				<button data-bs-toggle="modal" data-bs-target="#myModal" class="bg-primary">
@@ -74,9 +74,9 @@
 			{% endfor %}
 		</div>
 		<div class="description trick_infos_body">
-			{{form_row(detailsForm.description)}}
+			{{form_row(detailsForm.description, {"attr": {"value": trick.description | default("")}})}}
 			<div class="groupe_selector">
-				{{form_row(detailsForm.groupe_id)}}
+				{{form_row(detailsForm.groupe_id, {"attr": {"value": trick.getGroupeId.name | default("")}})}}
 			</div>
 		</div>
 		<div class="form_btns">

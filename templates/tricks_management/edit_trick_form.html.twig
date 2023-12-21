@@ -1,0 +1,98 @@
+{% extends "base.html.twig" %}
+{% block title %}
+	Modification de figure
+{% endblock %}
+{% block body %}
+	{% for message in app.flashes("alert-waring") %}
+		<div class="alert alert-warning">
+			{{message}}
+		</div>
+	{% endfor %}
+	<h1>Modification de figure</h1>
+	<div class="trick_management_error">
+		{{ form_errors(detailsForm) }}
+	</div>
+	{% include "shared/modals/_add_trick_file.html.twig" %}
+	{% include "shared/modals/_featured_file_modal.html.twig" %}
+	{{ form_start(featuredMedia) }}
+	{% include "shared/modals/_trick_featured_image_file.html.twig" %}
+	{% include "shared/modals/_trick_featured_image_ref.html.twig" %}
+	{{ form_end(featuredMedia) }}
+	{{ form_start(detailsForm) }}
+	<div class="trck_header">
+		<div class="featured_img">
+			<div class="img_container">
+				<img class="img-fluid" src={{trick.getFeaturedImage.path | default("")}} alt="image de mise en avant du figure">
+
+			</div>
+			<h4 class="trick_name">
+				{{ form_widget(detailsForm.name, {'attr':{'value': trick.name | default("")}}) }}
+			</h4>
+			<div class="edit-btn">
+				<button data-bs-toggle="modal" data-bs-target="#myModal" class="bg-primary">
+					<i class="fas fa-pencil-alt"></i>
+				</button>
+				{% if trick.getFeaturedImage %}
+					{# we extract file name in file path #}
+					{% set filePath = trick.getFeaturedImage.path|split('/') %}
+					{% set fileName = filePath|last %}
+					<a href="/edit/trick/remove_file/{{fileName}}" class="bg-danger">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+				{% endif %}
+
+			</div>
+		</div>
+		<div class="trick_files">
+			<div class="file">
+				<button class="bg-primary" data-bs-toggle="modal" data-bs-target="#add_trick_file">+</button>
+			</div>
+			{% for file in trick.files %}
+				<div class="file">
+					{% if file.typeFile == "image" %}
+						<a href={{file.path}} data-lightbox="image-gallery">
+							<img src={{file.path}} alt="image du trick">
+						</a>
+					{% else %}
+						<span class="iframe-contaier">
+							{{file.path | raw }}
+						</span>
+					{% endif %}
+					<div
+						class="trick_file_actions">
+						{# we extract file name in file path #}
+						{% set filePath = file.path|split('/') %}
+						{% set fileName = filePath|last %}
+						<button onclick='editTrickFile("{{fileName}}")' data-bs-toggle="modal" data-bs-target="#add_trick_file" class="bg-primary">
+							<i class="fas fa-pencil-alt"></i>
+						</button>
+						<a href="/edit/trick/remove_file/{{fileName}}" class="bg-danger">
+							<i class="fas fa-trash-alt"></i>
+						</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="description trick_infos_body">
+			{{form_row(detailsForm.description, {'value': trick.description})}}
+			<div class="groupe_selector">
+				{{form_row(detailsForm.groupe_id, {'value': trick.getGroupeId.name})}}
+			</div>
+		</div>
+		<div class="form_btns">
+			<a href='/edit/trick/clear' class="form_btn btn btn-danger">Effacer</a>
+			<button type="submit" class="form_btn btn btn-success">Mettre à jour</button>
+		</div>
+		{{ form_end(detailsForm) }}
+		{{ form_start(trickFile, {"attr": {"id":"trick_file_form"} }) }}
+		{% include "shared/modals/_media_trick_ref.html.twig" %}
+		{% include "shared/modals/_media_trick_file.html.twig" %}
+		{{ form_end(trickFile) }}
+	</div>
+	<script>
+		function editTrickFile(fileName) {
+const fileForm = document.querySelector("#trick_file_form");
+fileForm.setAttribute("action", `/create/trick?editTrick=${fileName}`);
+}
+	</script>
+{% endblock %}

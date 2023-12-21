@@ -32,11 +32,22 @@ class TrickController extends AbstractController {
         }
         return $this->redirect("/create/trick");
     }
+    #[Route('/edit/trick/clear', name: "edit_trick_clear")]
+    public function editTrickClear(Request $request): Response 
+    {
+        if($request->getSession()->get("trick_edit")) {
+            $request->getSession()->remove("trick_edit");
+        }
+        return $this->redirect("/create/trick");
+    }
     private function removeTrickFileByName(Trick $trick, string $fileName): bool
     {
-        $fileCollection = $trick->getFiles();
+        $fileCollection = $trick->files();
         foreach($fileCollection as $file) {
-            if(basename($file->getPath()) === $fileName) {
+            $currentFilePath = explode("/", $file->getPath());
+            // remove param in path if exist.
+            $currentFileName = explode("?", end($currentFilePath)) ? explode("?", end($currentFilePath))[0] : end($currentFilePath);
+            if($currentFileName === $fileName) {
                 $trick->removeFile($file);
                 return true;
             }
@@ -44,7 +55,7 @@ class TrickController extends AbstractController {
         return false;
     }
     #[Route("/create/trick/remove_file/{file_path}", name: "delete_on_creation_trick_file")]
-    public function deleteOnCreationTrickFile(Request $request): Response
+    public function deleteOnCreationTrickFile(Request $request): ?Response
     {
         $trick = $request->getSession()->get("trick");
         $fileName = $request->attributes->get("file_path");
@@ -52,6 +63,16 @@ class TrickController extends AbstractController {
         //  in the link (the file's path attribute) is the same as the one contained in the request. If it is, we remove it from the trick.
         $this->removeTrickFileByName($trick, $fileName);
         return $this->redirect("/create/trick");
+    }
+    #[Route("/edit/trick/remove_file/{file_path}", name: "delete_on_edition_trick_file")]
+    public function deleteOnEditionTrickFile(Request $request): ?Response
+    {
+        $trick = $request->getSession()->get("trick_edition");
+        $fileName = $request->attributes->get("file_path");
+        //  We iterate through the files of the trick and check if the file name contained
+        //  in the link (the file's path attribute) is the same as the one contained in the request. If it is, we remove it from the trick.
+        $this->removeTrickFileByName($trick, $fileName);
+        return $this->redirect("/edit/trick/".$trick->getSlug());
     }
     private function uploadSubmitedMediaFile(Trick $trick, array $params): void
     {
@@ -92,11 +113,55 @@ class TrickController extends AbstractController {
             }
         }
     }
-    #[Route("/edit/trick/{id}", name:"trick_edit")]
-    public function edit(Trick $trick): Response
+    #[Route("/edit/trick/{slug}", name:"trick_edit")]
+    public function edit(Request $request, Trick $editTrick): Response
     {
-        $this->denyAccessUnlessGranted('CAN_EDIT', $trick, "Vous n'avez pas le droit d'accéder à cette ressource");
-        return new Response("");
+        $this->denyAccessUnlessGranted('CAN_EDIT', $editTrick, "Non autorisé");
+        $session = $request->getSession();
+        $trick = $session->get("trick_edition", $editTrick);
+        if($trick->getId() !== $editTrick->getId()) {
+            $trick = $editTrick;
+        }
+        $trickDetailsForm = $this->createForm(TrickCreationFormType::class);
+        $trickFileForm = $this->createForm(FileFormType::class);
+        $trickFileForm->handleRequest($request);
+        $trickDetailsForm->handleRequest($request);
+        if ($trickFileForm->isSubmitted()) {
+            // if we have "editTrick" in get param, files is edited
+            // we delete old file (that is value in "editTrick")
+            if($request->query->get("editTrick")) {
+                $this->removeTrickFileByName($trick, $request->query->get('editTrick'));
+            }
+            $mediaRef = $request->request->all();
+            $this->uploadSubmitedMediaRef($trick, $mediaRef);
+            $mediaFile = $request->files->all();
+            $this->uploadSubmitedMediaFile($trick, $mediaFile);
+                
+        }
+        if ($trickDetailsForm->isSubmitted() && $trickDetailsForm->isValid()) {
+            $data = $trickDetailsForm->getData();
+            return $this->newTrickSaver->updateTrick($trick, $data, $session);
+        }
+        $session->set("trick_edition", $trick);
+        //
+        return $this->render("tricks_management/edit_trick_form.html.twig", [
+            "detailsForm" => $trickDetailsForm,
+            'featuredMedia' => $trickFileForm->createView(),
+            "trickFile" => $trickFileForm->createView(),
+            "trick" => $trick
+        ]);
+    }
+    #[Route("/delete/trick/{slug}", name: "delete_trick")]
+    public function delete(Request $request, Trick $trick): Response
+    {
+        $this->denyAccessUnlessGranted('CAN_EDIT', $trick, "Non autorisé");
+        if($this->newTrickSaver->deleteTrick($trick)) {
+            $this->addFlash('alert-success', "La figure a bien été supprimé.");
+        }
+        else {
+            $this->addFlash('alert-warning', "Un probleme est survenue lors de la suppression");
+        }
+        return $this->redirect("/");
     }
     #[Route("/create/trick", name:"creation")]
     #[IsGranted("CAN_CREATE")]
@@ -127,7 +192,7 @@ class TrickController extends AbstractController {
         $session->set("trick", $trick);
          //dd($request->files);
         
-        return $this->render("tricks_management/trick_creation.html.twig", [
+        return $this->render("tricks_management/trick_form.html.twig", [
             "detailsForm" => $trickDetailsForm,
             'featuredMedia' => $trickFileForm->createView(),
             "trickFile" => $trickFileForm->createView(),
