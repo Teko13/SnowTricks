@@ -19,16 +19,21 @@ class CommentController extends AbstractController
         $this->em = $em;
     }
     #[Route("/{slug}/comment", name:"comment", methods: ["POST"])]
-    #[IsGranted("CAN_CREATE")]
+    //#[IsGranted("CAN_CREATE", message:"Vous n'avez pas encors vérifier votre mail")]
     public function comment(Request $request, Trick $trick): Response
     {
-        $comment = new Comment;
+        if($this->isGranted("CAN_CREATE")) {
+            $comment = new Comment;
         $comment->setCreatedAt(new \DateTime)
         ->setContent($request->request->get("comment"))
         ->setAuthor($this->getUser())
         ->setTrickId($trick);
         $this->em->persist($comment);
         $this->em->flush();
+        }
+        else {
+            $this->addFlash('alert-warning', "Veuillez valider votre compte");
+        }
         return $this->redirect("/trick/".$trick->getSlug());
     }
 }
