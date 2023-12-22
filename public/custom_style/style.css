@@ -210,3 +210,27 @@ img {
     align-items: center;
     justify-content: flex-end;
 }
+
+.comment-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.comment-form input {
+    all: initial;
+    display: block;
+    width: 70%;
+    background: transparent;
+    border-radius: 1rem;
+    padding: .5rem;
+    border: 1px solid blue;
+    outline: none;
+    color: black;
+}
+
+.comment {
+    margin-bottom: 5rem;
+}

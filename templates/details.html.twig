@@ -56,11 +56,19 @@
 	</div>
 	<div class="comment">
 		<h2>Commentaires</h2>
+		{% if app.user %}
+			<form action="/{{trick.slug}}/comment" method="post" class="comment-form">
+				<input type="text" class="border-primary" placeholder="Ecrivez votre commentaire" name="comment">
+				<button type="submit" class="btn btn-primary">Laissez un commentaire</button>
+			</form>
+		{% endif %}
+
 		<div class="comments-container">
-			{% for comment in trick.comments %}
+			{% set sortedComments = trick.comments | sort((a,b) => b.createdAt <=> a.createdAt) %}
+			{% for comment in sortedComments %}
 				<div class="comment-content">
 					<div class="avatar">
-						<img src={{comment.author.avatar.path}} alt="image de l'auteur">
+						<img src={{comment.author.avatar.path | default("https://as2.ftcdn.net/v2/jpg/03/05/37/53/1000_F_305375322_2ZndLqWXETW0sgbm7LccoERzv6X7hNJZ.jpg")}} alt="image de l'auteur">
 					</div>
 					<div class="comment-infos">
 						<div class="user-name bg-primary text-light">

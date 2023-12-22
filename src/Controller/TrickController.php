@@ -14,7 +14,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class TrickController extends AbstractController {
     private SaveNewTrick $newTrickSaver;
     private UploadFile $fileUploader;
-    public function __construct(SaveNewTrick $newTrickSaver, UploadFile $fileUploader) {
+    public function __construct(SaveNewTrick $newTrickSaver, UploadFile $fileUploader) 
+    {
         $this->fileUploader = $fileUploader;
         $this->newTrickSaver = $newTrickSaver;
     }
@@ -22,6 +23,7 @@ class TrickController extends AbstractController {
     #[Route('/trick/{slug}',name: "trick_show")]
     function show(Trick $trick): Response
     {
+        //dd($trick->getComments()->toArray());
         return $this->render("details.html.twig", compact("trick"));
     }
     #[Route('/create/trick/clear', name: "trick_clear")]
@@ -113,46 +115,9 @@ class TrickController extends AbstractController {
             }
         }
     }
-    #[Route("/edit/trick/{slug}", name:"trick_edit")]
-    public function edit(Request $request, Trick $editTrick): Response
-    {
-        $this->denyAccessUnlessGranted('CAN_EDIT', $editTrick, "Non autorisé");
-        $session = $request->getSession();
-        $trick = $session->get("trick_edition", $editTrick);
-        if($trick->getId() !== $editTrick->getId()) {
-            $trick = $editTrick;
-        }
-        $trickDetailsForm = $this->createForm(TrickCreationFormType::class);
-        $trickFileForm = $this->createForm(FileFormType::class);
-        $trickFileForm->handleRequest($request);
-        $trickDetailsForm->handleRequest($request);
-        if ($trickFileForm->isSubmitted()) {
-            // if we have "editTrick" in get param, files is edited
-            // we delete old file (that is value in "editTrick")
-            if($request->query->get("editTrick")) {
-                $this->removeTrickFileByName($trick, $request->query->get('editTrick'));
-            }
-            $mediaRef = $request->request->all();
-            $this->uploadSubmitedMediaRef($trick, $mediaRef);
-            $mediaFile = $request->files->all();
-            $this->uploadSubmitedMediaFile($trick, $mediaFile);
-                
-        }
-        if ($trickDetailsForm->isSubmitted() && $trickDetailsForm->isValid()) {
-            $data = $trickDetailsForm->getData();
-            return $this->newTrickSaver->updateTrick($trick, $data, $session);
-        }
-        $session->set("trick_edition", $trick);
-        //
-        return $this->render("tricks_management/edit_trick_form.html.twig", [
-            "detailsForm" => $trickDetailsForm,
-            'featuredMedia' => $trickFileForm->createView(),
-            "trickFile" => $trickFileForm->createView(),
-            "trick" => $trick
-        ]);
-    }
+    
     #[Route("/delete/trick/{slug}", name: "delete_trick")]
-    public function delete(Request $request, Trick $trick): Response
+    public function delete(Trick $trick): Response
     {
         $this->denyAccessUnlessGranted('CAN_EDIT', $trick, "Non autorisé");
         if($this->newTrickSaver->deleteTrick($trick)) {
@@ -163,6 +128,7 @@ class TrickController extends AbstractController {
         }
         return $this->redirect("/");
     }
+    
     #[Route("/create/trick", name:"creation")]
     #[IsGranted("CAN_CREATE")]
     public function create(Request $request): Response
@@ -198,5 +164,5 @@ class TrickController extends AbstractController {
             "trickFile" => $trickFileForm->createView(),
             "trick" => $trick
         ]);
-    } 
+    }
 }
