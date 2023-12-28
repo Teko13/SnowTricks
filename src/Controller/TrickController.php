@@ -3,7 +3,7 @@ namespace App\Controller;
 use App\Entity\Trick;
 use App\Form\FileFormType;
 use App\Form\TrickCreationFormType;
-use App\SaveNewTrick\SaveNewTrick;
+use App\ManageTrick\ManageTrick;
 use App\UploadFile\UploadFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,18 +12,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TrickController extends AbstractController {
-    private SaveNewTrick $newTrickSaver;
+    private ManageTrick $manageTrick;
     private UploadFile $fileUploader;
-    public function __construct(SaveNewTrick $newTrickSaver, UploadFile $fileUploader) 
+    public function __construct(ManageTrick $manageTrick, UploadFile $fileUploader) 
     {
         $this->fileUploader = $fileUploader;
-        $this->newTrickSaver = $newTrickSaver;
+        $this->manageTrick = $manageTrick;
     }
 
     #[Route('/trick/{slug}',name: "trick_show")]
     function show(Trick $trick): Response
     {
-        //dd($trick->getComments()->toArray());
+        // dd($trick->getComments()->toArray());
         return $this->render("details.html.twig", compact("trick"));
     }
     #[Route('/create/trick/clear', name: "trick_clear")]
@@ -120,7 +120,7 @@ class TrickController extends AbstractController {
     public function delete(Trick $trick): Response
     {
         $this->denyAccessUnlessGranted('CAN_EDIT', $trick, "Non autorisé");
-        if($this->newTrickSaver->deleteTrick($trick)) {
+        if($this->manageTrick->deleteTrick($trick)) {
             $this->addFlash('alert-success', "La figure a bien été supprimé.");
         }
         else {
@@ -153,11 +153,9 @@ class TrickController extends AbstractController {
         }
         if ($trickDetailsForm->isSubmitted() && $trickDetailsForm->isValid()) {
             $data = $trickDetailsForm->getData();
-            return $this->newTrickSaver->saveNewTrick($trick, $data, $session);
+            return $this->manageTrick->saveNewTrick($trick, $data, $session);
         }
         $session->set("trick", $trick);
-         //dd($request->files);
-        
         return $this->render("tricks_management/trick_form.html.twig", [
             "detailsForm" => $trickDetailsForm,
             'featuredMedia' => $trickFileForm->createView(),
@@ -165,4 +163,5 @@ class TrickController extends AbstractController {
             "trick" => $trick
         ]);
     }
+    
 }

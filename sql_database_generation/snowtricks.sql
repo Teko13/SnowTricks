@@ -12,6 +12,8 @@ CREATE TABLE `user` (
     roles JSON NOT NULL,
     valide BOOLEAN NOT NULL DEFAULT FALSE,
     is_verified BOOLEAN NOT NULL,
+    reset_token VARCHAR(255),
+    expire_date DATETIME,
     UNIQUE (user_name)
 );
 

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -44,6 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: "is_verified", type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $reset_token = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $expire_date = null;
 
     public function __construct()
     {
@@ -212,6 +219,30 @@ public function isVerified(): bool
 public function setIsVerified(bool $isVerified): static
 {
     $this->isVerified = $isVerified;
+
+    return $this;
+}
+
+public function getResetToken(): ?string
+{
+    return $this->reset_token;
+}
+
+public function setResetToken(?string $reset_token): static
+{
+    $this->reset_token = $reset_token;
+
+    return $this;
+}
+
+public function getExpireDate(): ?\DateTimeInterface
+{
+    return $this->expire_date;
+}
+
+public function setExpireDate(?\DateTimeInterface $expire_date): static
+{
+    $this->expire_date = $expire_date;
 
     return $this;
 }
