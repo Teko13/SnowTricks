@@ -163,5 +163,42 @@ class TrickController extends AbstractController {
             "trick" => $trick
         ]);
     }
-    
+    #[Route("/edit/trick/{slug}", name:"trick_edit")]
+    public function edit(Request $request, Trick $editTrick): Response
+    {
+        $this->denyAccessUnlessGranted('CAN_EDIT', $editTrick, "Non autorisé");
+        $session = $request->getSession();
+        $trick = $session->get("trick_edition", $editTrick);
+        if($trick->getId() !== $editTrick->getId()) {
+            $trick = $editTrick;
+        }
+        $trickDetailsForm = $this->createForm(TrickCreationFormType::class);
+        $trickFileForm = $this->createForm(FileFormType::class);
+        $trickFileForm->handleRequest($request);
+        $trickDetailsForm->handleRequest($request);
+        if ($trickFileForm->isSubmitted()) {
+            // if we have "editTrick" in get param, files is edited
+            // we delete old file (that is value in "editTrick")
+            if($request->query->get("editTrick")) {
+                $this->removeTrickFileByName($trick, $request->query->get('editTrick'));
+            }
+            $mediaRef = $request->request->all();
+            $this->uploadSubmitedMediaRef($trick, $mediaRef);
+            $mediaFile = $request->files->all();
+            $this->uploadSubmitedMediaFile($trick, $mediaFile);
+
+        }
+        if ($trickDetailsForm->isSubmitted() && $trickDetailsForm->isValid()) {
+            $data = $trickDetailsForm->getData();
+            return $this->manageTrick->updateTrick($trick, $data, $session);
+        }
+        $session->set("trick_edition", $trick);
+        //
+        return $this->render("tricks_management/edit_trick_form.html.twig", [
+            "detailsForm" => $trickDetailsForm,
+            'featuredMedia' => $trickFileForm->createView(),
+            "trickFile" => $trickFileForm->createView(),
+            "trick" => $trick
+        ]);
+    }
 }
