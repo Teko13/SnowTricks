@@ -1,6 +1,6 @@
 <?php
 
-namespace App\SaveNewTrick;
+namespace App\ManageTrick;
 
 use App\Entity\Trick;
 use App\Sluger\Sluger;
@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class SaveNewTrick extends AbstractController
+class ManageTrick extends AbstractController
 {
     private EntityManagerInterface $em;
     private Sluger $sluger;
@@ -22,7 +22,6 @@ class SaveNewTrick extends AbstractController
 
     public function saveNewTrick(Trick $trick, Trick $formData, Session $session): Response
     {
-        $flashBag = $session->getBag("flashes");
         $trick->setName($formData->getName())
             ->setDescription($formData->getDescription())
             ->setSlug($this->sluger->slugify($formData->getName()))
@@ -32,33 +31,42 @@ class SaveNewTrick extends AbstractController
             ->setAuthor($this->getUser());
 
         if (!$trick->getFeaturedImage()) {
-            $session->set("trick", $trick);
-            $flashBag->set("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
+            $trickFiles = $trick->files()->toArray();
+            // If featuredImage is not set choose first image in trick files.
+            foreach($trickFiles as $file) {
+                if($file->getTypeFile() === "image") {
+                    //replace file
+                    $trick->removeFile($file);
+                    $featuredImage = $file->setFeaturedImage(true);
+                    $trick->addFile($featuredImage);
+                }
+            }
+            // if not image return error flash message 
+            if(!$trick->getFeaturedImage()) {
+            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
             return $this->redirect("/create/trick");
+            }
         }
 
         $trickRepos = $this->em->getRepository(Trick::class);
 
         if ($trickRepos->findBy(["name" => $trick->getName()])) {
-            $flashBag = $session->getBag("flashes");
             $session->set("trick", $trick);
-            $flashBag->set("alert-waring", "Cette figure existe déjà");
+            $this->addFlash("alert-waring", "Cette figure existe déjà");
             return $this->redirect("/create/trick");
         }
 
         $this->em->persist($trick);
         $this->em->flush();
 
-        $flashBag = $session->getFlashBag();
         $session->remove("trick");
-        $flashBag->set("alert-success", "La figure a bien été créée");
+        $this->addFlash("alert-success", "La figure a bien été créée");
         return $this->redirect("/");
     }
     public function updateTrick(Trick $trick, Trick $formData, Session $session): Response
     {
         $trickRepos = $this->em->getRepository(Trick::class);
         $updateTrick = $trickRepos->findOneBy(["id"=>$trick->getId()]);
-        $flashBag = $session->getBag("flashes");
         $updateTrick->setName($formData->getName())
             ->setDescription($formData->getDescription())
             ->setSlug($this->sluger->slugify($formData->getName()))
@@ -79,16 +87,28 @@ class SaveNewTrick extends AbstractController
             }
 
         if (!$updateTrick->getFeaturedImage()) {
-            $session->set("trick", $trick);
-            $flashBag->set("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
-            return $this->redirect("/create/trick");
+            $trickFiles = $updateTrick->files()->toArray();
+            // If featuredImage is not set choose first image in trick files.
+            foreach($trickFiles as $file) {
+                if($file->getTypeFile() === "image") {
+                    //replace file
+                    $updateTrick->removeFile($file);
+                    $featuredImage = $file->setFeaturedImage(true);
+                    $updateTrick->addFile($featuredImage);
+                }
+            }
+            // if no image return error flash message 
+            if(!$updateTrick->getFeaturedImage()) {
+                $session->set("trick", $trick);
+            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
+            return $this->redirect("/edit/trick/".$updateTrick->getSlug());
+            }
         }
         $this->em->persist($updateTrick);
         $this->em->flush();
 
-        $flashBag = $session->getFlashBag();
         $session->remove("trick_edition");
-        $flashBag->set("alert-success", "La figure a bien été créée");
+        $this->addFlash("alert-success", "La figure a bien été créée");
         return $this->redirect("/");
     }
     public function deleteTrick(Trick $trick): void
