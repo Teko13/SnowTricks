@@ -1,19 +1,46 @@
 {% extends "base.html.twig" %}
 {% block body %}
-	<h1 class="mb-2">Liste des figures</h1>
-	<div class="row">
+	<div class="header-img-container">
+		<div class="img-container">
+			<img src="https://images.pexels.com/photos/1271147/pexels-photo-1271147.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="image d'entete">
+		</div>
+		<h1>Snowtricks</h1>
+		<div class="arrow" id="down">
+			<i class="fas fa-arrow-down"></i>
+		</div>
+	</div>
+	<h2 class="my-4">Liste des figures</h2>
+	<div class="cards">
 		{% set sortedTrick = tricks | sort((a,b) => b.createdAt <=> a.createdAt) %}
 		{% for trick in sortedTrick %}
-			<div class="col-md-4">
+			{% include "shared/modals/_delete_trick.html.twig" %}
+			<div>
 				<div class="card">
-					<img src={{trick.getFeaturedImage.path}} alt="Snowbord image" class="img-fluid">
+					<div class="card-img">
+						<img src={{trick.getFeaturedImage.path}} alt="Snowbord image" class="img-fluid">
+					</div>
 					<div class="card-body">
 						<a href="trick/{{trick.slug}}">
 							<h4 class="card-title">{{trick.name}}</h4>
 						</a>
+						{% if app.user == trick.author %}
+							<div class="edit-btn">
+								<a href="/edit/trick/{{trick.slug}}" class="bg-primary">
+									<i class="fas fa-pencil-alt"></i>
+								</a>
+								<button data-bs-toggle="modal" data-bs-target="#deleteTrick" class="bg-danger">
+									<i class="fas fa-trash-alt"></i>
+								</button>
+							</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>
 		{% endfor %}
 	</div>
+	<button class="btn btn-primary" id="loadMore">Charger plus</button>
+	<div class="arrow" id='up'>
+		<i class="fas fa-arrow-up"></i>
+	</div>
+	<script src="http://localhost:8000/custom_js/homepage.js"></script>
 {% endblock %}

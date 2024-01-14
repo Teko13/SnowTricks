@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class LoginType extends AbstractType
 {
@@ -17,11 +18,18 @@ class LoginType extends AbstractType
                 'label'=> "Nom d'utilisateur",
                 "attr" => [
                     "placeholder"=> "Votre nom d'utilisateur",
-            ]])
+                ],
+                "constraints" => [
+                    new NotBlank(["message" => "Veuillez saisir votre nom d'utilisateur"])
+                ] 
+                ])
             ->add("password", PasswordType::class, [
                 "label"=> "Mot de passe",
                 "attr" => [
                     "placeholder"=> "Votre mot de pass",
+                ],
+                "constraints" => [
+                    new NotBlank(["message" => "Veuillez saisir votre mot de passe"])
                 ]
             ])
         ;

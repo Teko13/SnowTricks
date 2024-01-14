@@ -1,6 +1,11 @@
 <nav class="navbar navbar-expand-lg bg-primary mb-5" data-bs-theme="dark">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="/">SnowTricks</a>
+		<a class="navbar-brand" href="/">
+			<span class="home-icon">
+				<i class="fas fa-home"></i>
+			</span>
+			<span class="site-title">SnowTricks</span>
+		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -15,6 +20,13 @@
 			<ul class="navbar-nav">
 				{% if app.user %}
 					<li class="nav-item">
+						<a href="/profil" class="login-user">
+							<span class="nav-profil-pic"><img src={{app.user.avatar.path | default("https://as2.ftcdn.net/v2/jpg/03/05/37/53/1000_F_305375322_2ZndLqWXETW0sgbm7LccoERzv6X7hNJZ.jpg")}} alt="photo de profil">
+							</span>
+							{{app.user.username}}
+						</a>
+					</li>
+					<li>
 						<a href={{ path("security_logout") }} class="btn btn-danger">Déconnexion</a>
 					</li>
 				{% else %}
@@ -27,11 +39,11 @@
 				{% endif %}
 			</ul>
 			{# 
-			                <form class="d-flex">
-			                    <input class="form-control me-sm-2" type="search" placeholder="Search">
-			                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-			                </form>
-			             #}
+																																																															                <form class="d-flex">
+																																																															                    <input class="form-control me-sm-2" type="search" placeholder="Search">
+																																																															                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+																																																															                </form>
+																																																															             #}
 		</div>
 	</div>
 </nav>

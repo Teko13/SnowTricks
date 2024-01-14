@@ -31,38 +31,26 @@ class AppFixtures extends Fixture
         ->setUserName("admin")
         ->setPassword($this->hasher->hashPassword($admin, "admin"))
         ->setValide(true)
-        ->setRoles(["ROLE_ADMIN"]);
+        ->setRoles(["ROLE_ADMIN"])
+        ->setIsVerified(true);
         $manager->persist($admin);
         $userFile = new UserFile;
         $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
         ->setUserId($admin);
         $manager->persist($userFile);
-        $user = new User;
-        $user->setEmail("ffabrice999@gmail.com")
-        ->setUserName("teko13")
-        ->setPassword($this->hasher->hashPassword($user, "teko"))
-        ->setValide(true);
-        $manager->persist($user);
         $userFile = new UserFile;
         $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
-        ->setUserId($user);
-        $manager->persist($userFile);
-        $user1 = new User;
-        $user1->setEmail("user1@gmail.com")
-        ->setUserName("user1")
-        ->setPassword($this->hasher->hashPassword($user, "user"))
-        ->setValide(true);
-        $manager->persist($user1);
-        $userFile = new UserFile;
-        $userFile->setPath("https://images.pexels.com/photos/2686914/pexels-photo-2686914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
-        ->setUserId($user1);
+        ->setUserId($admin);
         $manager->persist($userFile);
         $groupe = new Groupe;
         $groupe->setName("A");
         $manager->persist($groupe);
+        $groupeB = new Groupe;
+        $groupeB->setName("B");
+        $manager->persist($groupeB);
         foreach($snowboardTricks as $i) {
             $trick = new Trick;
-        $trick->setAuthor($user)
+        $trick->setAuthor($admin)
         ->setName($i->name)
         ->setSlug($this->sluger->slugify($trick->getName()))
         ->setDescription($i->description)
@@ -81,9 +69,9 @@ class AppFixtures extends Fixture
         }
         $manager->persist($trickFile);
         }
-        for($cmt = 0; $cmt < 10; $cmt++) {
+        for($cmt = 0; $cmt < 3; $cmt++) {
             $comment = new Comment;
-            $comment->setAuthor($user)
+            $comment->setAuthor($admin)
             ->setCreatedAt(new \DateTime)
             ->setTrickId($trick)
             ->setContent("lorem smklkdl sdmnkcdn ejkldczkc dklsjcsklsmkl dsmlkjdslkcdsq smjklcq dsmjcjklqdmilkjc sdkjcqksmldj ksmdjcj skl");

@@ -1,4 +1,4 @@
-<div class="modal" id="tick_featured_image_ref">
+<div class="modal" id="newGroupe">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -7,10 +7,12 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				{{ form_row(featuredMedia.media_ref, {"full_name": "featured_image_ref"}) }}
+				{{form_start(newGroupe)}}
+				{{ form_row(newGroupe.name) }}
+				<button type='submit' class="btn btn-primary">Enrégistrer</button>
+				{{form_end(newGroupe)}}
 			</div>
 			<div class="modal-footer">
-				<button type='submit' class="btn btn-primary">Enrégistrer</button>
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 			</div>
 		</div>
