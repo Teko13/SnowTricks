@@ -5,17 +5,94 @@ img {
     overflow: hidden;
 }
 
+.home-icon {
+    display: none;
+}
+
+nav.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.arrow#up {
+    position: fixed;
+    display: none;
+}
+
+#loadMore {
+    display: none;
+    width: fit-content;
+    margin: 1rem auto;
+}
+
+.arrow#down {
+    position: absolute;
+    color: white;
+}
+
+.arrow {
+    z-index: 8;
+    bottom: 2rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.header-img-container {
+    z-index: 1;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.header-img-container img {
+    height: 100vh;
+}
+
+.header-img-container::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+    background: #000;
+    opacity: .5;
+}
+
+.header-img-container h1 {
+    z-index: 3;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.trick_name.input input {
+    all: unset;
+    display: block;
+    width: 50%;
+    border: 1px solid white;
+    padding: .5rem;
+    border-radius: 1rem;
+}
+
 .trck_header {
     margin-bottom: 1rem;
 }
 
 .featured_img {
+    height: 50vh;
     position: relative;
     background: rgba(238, 9, 9, 0.076);
 }
 
 .featured_img .img_container {
-    height: 40rem;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -45,6 +122,10 @@ img {
     z-index: 10;
 }
 
+.in-edition {
+    position: relative;
+}
+
 .featured_img .edit-btn a,
 .featured_img .edit-btn button {
     padding: 1rem;
@@ -59,23 +140,37 @@ img {
 }
 
 .infos ul {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    margin: 1rem 0;
     gap: 3rem;
+    padding: 0;
 }
 
 .infos ul li {
     list-style-type: none;
+    display: block;
     padding: 1rem;
+    text-align: center;
     border-radius: .3rem;
     font-weight: 600;
     color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 500ms ease;
+}
+
+.infos ul li:hover {
+    white-space: wrap;
 }
 
 .trick_files {
     display: flex;
     align-items: center;
     overflow-x: scroll;
+    overflow-y: hidden;
     gap: 1rem;
     margin-top: 1rem;
 }
@@ -109,7 +204,7 @@ img {
 .comment-content {
     width: 50%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1.5rem;
 }
 
@@ -128,6 +223,45 @@ img {
 
 .comment-content .comment-infos .content {
     font-weight: 600;
+}
+
+.profil {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-infos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-pic {
+    width: 10rem;
+    height: 10rem;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.roles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .comment-content .comment-infos .date {
@@ -157,6 +291,14 @@ img {
     align-items: center;
     border: 2px solid white;
     border-radius: 1rem;
+}
+
+.nav-profil-pic {
+    display: inline-block;
+    overflow: hidden;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
 }
 
 .security-form div {
@@ -213,9 +355,8 @@ img {
 
 .comment-form {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
-    padding: 1rem;
     margin: 1rem 0;
 }
 
@@ -224,13 +365,199 @@ img {
     display: block;
     width: 70%;
     background: transparent;
-    border-radius: 1rem;
+    border-radius: 1rem 0 0 1rem;
     padding: .5rem;
     border: 1px solid blue;
     outline: none;
     color: black;
 }
 
+.comment-form button {
+    border-radius: 0 1rem 1rem 0;
+}
+
 .comment {
     margin-bottom: 5rem;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.login-user {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+    margin-right: 1rem;
+    border: 1px solid;
+    gap: 1rem;
+    border-radius: 3rem;
+    padding: .5rem;
+    cursor: pointer;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: none;
+}
+
+.card-img {
+    width: 100%;
+    overflow: hidden;
+    max-height: 10rem;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    justify-content: center;
+    gap: 1rem;
+}
+
+.card .edit-btn {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.card-body .edit-btn button,
+.card-body .edit-btn a {
+    margin: 0 .2rem;
+    padding: .3rem;
+    border: none;
+    font-size: 1rem;
+    color: white;
+}
+
+.card-body {
+    padding: 1rem .3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-body a {
+    all: unset;
+    color: black;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    cursor: pointer;
+    text-overflow: ellipsis !important;
+}
+
+
+.card {
+    margin-bottom: 1rem;
+    border-radius: .5rem;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 2px 2px 1rem black;
+}
+
+#displayTrickFiles {
+    margin: 1rem auto;
+    display: none;
+}
+
+.trick_file_actions {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.trick_files .trick_file_actions a,
+.trick_files .trick_file_actions button {
+    all: unset;
+    text-align: center;
+    background: red;
+    padding: .2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.trick_files .trick_file_actions button {
+    background: blue;
+}
+
+@media screen and (max-width: 600px) {
+    .card-body a {
+        font-size: .5rem;
+    }
+
+    .cards {
+        grid-template-columns: repeat(3, 25%);
+    }
+
+    .description {
+        margin: 2rem 0;
+        padding: 1rem 0;
+    }
+
+    .trick_name.input input {
+        width: 70%;
+    }
+
+    .infos ul {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .comment-content {
+        width: 100%;
+        gap: 1rem;
+    }
+
+    #displayTrickFiles {
+        display: block;
+    }
+
+    #trickFiles {
+        display: none;
+    }
+
+    .card-body .edit-btn button,
+    .card-body .edit-btn a {
+        font-size: .7rem;
+        padding: .3rem;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+    .home-icon {
+        display: inline;
+    }
+
+    .site-title {
+        display: none;
+    }
+
+    nav.navbar {
+        top: unset;
+        margin-bottom: 0 !important;
+        bottom: 0;
+    }
+
+    #loadMore {
+        margin-bottom: 5rem;
+    }
+
+    .cards {
+        grid-template-columns: 100%;
+    }
+
+
+    .trick_name.input input {
+        width: 80%;
+        padding: .5rem;
+        font-size: 1rem;
+    }
 }

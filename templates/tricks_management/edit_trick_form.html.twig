@@ -13,11 +13,11 @@
 		{{ form_errors(detailsForm) }}
 	</div>
 	{% include "shared/modals/_add_trick_file.html.twig" %}
-	{% include "shared/modals/_featured_file_modal.html.twig" %}
-	{{ form_start(featuredMedia) }}
-	{% include "shared/modals/_trick_featured_image_file.html.twig" %}
-	{% include "shared/modals/_trick_featured_image_ref.html.twig" %}
-	{{ form_end(featuredMedia) }}
+	{% include "shared/modals/_files_modal.html.twig" %}
+	{{ form_start(mediaForm) }}
+	{% include "shared/modals/_image_file.html.twig" %}
+	{% include "shared/modals/_image_ref.html.twig" %}
+	{{ form_end(mediaForm) }}
 	{{ form_start(detailsForm) }}
 	<div class="trck_header">
 		<div class="featured_img">
@@ -25,7 +25,7 @@
 				<img class="img-fluid" src={{trick.getFeaturedImage.path | default("")}} alt="image de mise en avant du figure">
 
 			</div>
-			<h4 class="trick_name">
+			<h4 class="trick_name input">
 				{{ form_widget(detailsForm.name, {'attr':{'value': trick.name | default("")}}) }}
 			</h4>
 			<div class="edit-btn">
@@ -43,12 +43,13 @@
 
 			</div>
 		</div>
-		<div class="trick_files">
+		<button id="displayTrickFiles" class="btn btn-primary">Voir plus</button>
+		<div class="trick_files" id="trickFiles">
 			<div class="file">
 				<button class="bg-primary" data-bs-toggle="modal" data-bs-target="#add_trick_file">+</button>
 			</div>
 			{% for file in trick.files %}
-				<div class="file">
+				<div class="file in-edition">
 					{% if file.typeFile == "image" %}
 						<a href={{file.path}} data-lightbox="image-gallery">
 							<img src={{file.path}} alt="image du trick">
@@ -63,10 +64,10 @@
 						{# we extract file name in file path #}
 						{% set filePath = file.path|split('/') %}
 						{% set fileName = filePath|last %}
-						<button onclick='editTrickFile("{{fileName}}")' data-bs-toggle="modal" data-bs-target="#add_trick_file" class="bg-primary">
+						<button onclick='editTrickFile("{{fileName}}")' data-bs-toggle="modal" data-bs-target="#add_trick_file">
 							<i class="fas fa-pencil-alt"></i>
 						</button>
-						<a href="/edit/trick/remove_file/{{fileName}}" class="bg-danger">
+						<a href="/edit/trick/remove_file/{{fileName}}">
 							<i class="fas fa-trash-alt"></i>
 						</a>
 					</div>
@@ -77,6 +78,7 @@
 			{{form_row(detailsForm.description, {'value': trick.description})}}
 			<div class="groupe_selector">
 				{{form_row(detailsForm.groupe_id, {'value': trick.getGroupeId.name})}}
+				<button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#newGroupe">Nouveau groupe</button>
 			</div>
 		</div>
 		<div class="form_btns">
@@ -88,9 +90,24 @@
 		{% include "shared/modals/_media_trick_ref.html.twig" %}
 		{% include "shared/modals/_media_trick_file.html.twig" %}
 		{{ form_end(trickFile) }}
+		{% include "shared/modals/_new_groupe.html.twig" %}
 	</div>
 	<script>
-		function editTrickFile(fileName) {
+		const displayBtn = document.querySelector("#displayTrickFiles");
+const block = document.querySelector("#trickFiles");
+let isDisplay = false; // Changed const to let
+
+displayBtn.addEventListener("click", () => {
+isDisplay = ! isDisplay;
+if (isDisplay) {
+block.style.display = "flex";
+displayBtn.textContent = "Cacheer";
+} else if (! isDisplay) {
+block.style.display = "none";
+displayBtn.textContent = "Voir plus";
+}
+});
+function editTrickFile(fileName) {
 const fileForm = document.querySelector("#trick_file_form");
 fileForm.setAttribute("action", `/create/trick?editTrick=${fileName}`);
 }

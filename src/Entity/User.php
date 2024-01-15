@@ -31,8 +31,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column]
-    private ?bool $valide = null;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Trick::class, orphanRemoval: true)]
     private Collection $tricks;
@@ -40,7 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
-    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user_id', targetEntity: UserFile::class, cascade: ['persist', 'remove'])]
     private ?UserFile $avatar = null;
 
     #[ORM\Column(name: "is_verified", type: 'boolean')]
@@ -110,17 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isValide(): ?bool
-    {
-        return $this->valide;
-    }
 
-    public function setValide(bool $valide): static
-    {
-        $this->valide = $valide;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Trick>
@@ -170,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeComment(Comment $comment): static
+    public function FveComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
             // set the owning side to null (unless already changed)

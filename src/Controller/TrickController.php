@@ -2,6 +2,7 @@
 namespace App\Controller;
 use App\Entity\Trick;
 use App\Form\FileFormType;
+use App\Form\NewGroupeFormType;
 use App\Form\TrickCreationFormType;
 use App\ManageTrick\ManageTrick;
 use App\UploadFile\UploadFile;
@@ -13,10 +14,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TrickController extends AbstractController {
     private ManageTrick $manageTrick;
+    private AddNewGroupe $addNewGroupe;
     private UploadFile $fileUploader;
-    public function __construct(ManageTrick $manageTrick, UploadFile $fileUploader) 
+    public function __construct(AddNewGroupe $addNewGroupe, ManageTrick $manageTrick, UploadFile $fileUploader) 
     {
         $this->fileUploader = $fileUploader;
+        $this->addNewGroupe = $addNewGroupe;
         $this->manageTrick = $manageTrick;
     }
 
@@ -80,7 +83,7 @@ class TrickController extends AbstractController {
     {
         foreach($params as $fieldName => $file) {
             switch($fieldName) {
-                case 'featured_image_file':
+                case 'image_file':
                     if($file) {
                         if(!$this->fileUploader->addUploadedFeaturedImageFile($file, $trick)) {
                             $this->addFlash('alert-warning', "Fichier non autorisé");
@@ -101,7 +104,7 @@ class TrickController extends AbstractController {
     {
         foreach($params as $fieldName => $ref) {
             switch($fieldName) {
-                case "featured_image_ref":
+                case "image_ref":
                     if($ref !== "") {
                         $this->fileUploader->addFeaturedImageRef($trick, $ref);
                     }
@@ -119,12 +122,12 @@ class TrickController extends AbstractController {
     #[Route("/delete/trick/{slug}", name: "delete_trick")]
     public function delete(Trick $trick): Response
     {
-        $this->denyAccessUnlessGranted('CAN_EDIT', $trick, "Non autorisé");
-        if($this->manageTrick->deleteTrick($trick)) {
+        if(!$this->denyAccessUnlessGranted('CAN_EDIT', $trick)) {
+            $this->manageTrick->deleteTrick($trick);
             $this->addFlash('alert-success', "La figure a bien été supprimé.");
         }
         else {
-            $this->addFlash('alert-warning', "Un probleme est survenue lors de la suppression");
+            $this->addFlash('alert-warning', "Non autorisé");
         }
         return $this->redirect("/");
     }
@@ -137,6 +140,11 @@ class TrickController extends AbstractController {
         $trick = $session->get("trick", new Trick);
         $trickDetailsForm = $this->createForm(TrickCreationFormType::class);
         $trickFileForm = $this->createForm(FileFormType::class);
+        $newGroupeForm = $this->createForm(NewGroupeFormType::class);
+        $newGroupeForm->handleRequest($request);
+        if($newGroupeForm->isSubmitted() && $newGroupeForm->isValid()) {
+            $this->addNewGroupe->addNewGroupe($newGroupeForm);
+        }
         $trickFileForm->handleRequest($request);
         $trickDetailsForm->handleRequest($request);
         if ($trickFileForm->isSubmitted()) {
@@ -156,10 +164,11 @@ class TrickController extends AbstractController {
             return $this->manageTrick->saveNewTrick($trick, $data, $session);
         }
         $session->set("trick", $trick);
-        return $this->render("tricks_management/trick_form.html.twig", [
+        return $this->render("tricks_management/create_trick.html.twig", [
             "detailsForm" => $trickDetailsForm,
-            'featuredMedia' => $trickFileForm->createView(),
+            'mediaForm' => $trickFileForm->createView(),
             "trickFile" => $trickFileForm->createView(),
+            "newGroupe" => $newGroupeForm->createView(), 
             "trick" => $trick
         ]);
     }
@@ -174,6 +183,11 @@ class TrickController extends AbstractController {
         }
         $trickDetailsForm = $this->createForm(TrickCreationFormType::class);
         $trickFileForm = $this->createForm(FileFormType::class);
+        $newGroupeForm = $this->createForm(NewGroupeFormType::class);
+        $newGroupeForm->handleRequest($request);
+        if($newGroupeForm->isSubmitted() && $newGroupeForm->isValid()) {
+            $this->addNewGroupe->addNewGroupe($newGroupeForm);
+        }
         $trickFileForm->handleRequest($request);
         $trickDetailsForm->handleRequest($request);
         if ($trickFileForm->isSubmitted()) {
@@ -196,8 +210,9 @@ class TrickController extends AbstractController {
         //
         return $this->render("tricks_management/edit_trick_form.html.twig", [
             "detailsForm" => $trickDetailsForm,
-            'featuredMedia' => $trickFileForm->createView(),
+            'mediaForm' => $trickFileForm->createView(),
             "trickFile" => $trickFileForm->createView(),
+            "newGroupe" => $newGroupeForm->createView(),
             "trick" => $trick
         ]);
     }

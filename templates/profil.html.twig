@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+{% block title %}
+	{{app.user.username}}
+{% endblock %}
+{% block body %}
+	<div class="profil">
+		<div class="user-infos">
+			<div class="user-pic">
+				<img src={{app.user.avatar.path | default("https://as2.ftcdn.net/v2/jpg/03/05/37/53/1000_F_305375322_2ZndLqWXETW0sgbm7LccoERzv6X7hNJZ.jpg")}} alt="photo de profil">
+			</div>
+			<button data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-primary">
+				Changer la photo
+			</button>
+			<h1>
+				{{app.user.username}}
+			</h1>
+			<h2>
+				{{app.user.email}}
+			</h2>
+		</div>
+		<div class="status">
+			<h4>Statut du profil:
+			</h4>
+			<div>
+				{% if app.user.isVerified %}
+					<i class="text-primary">Validé</i>
+				{% else %}
+					<i class="text-danger">En attente de validation</i>
+				{% endif %}
+
+			</div>
+		</div>
+		<div class="roles">
+			<h4>Rôles:</h4>
+			<div class="roles-list">
+				{% for role in app.user.roles %}
+					<i>{{role}}</i>
+				{% endfor %}
+			</div>
+		</div>
+		{% include "shared/modals/_files_modal.html.twig" %}
+		{{ form_start(mediaForm) }}
+		{% include "shared/modals/_image_file.html.twig" %}
+		{% include "shared/modals/_image_ref.html.twig" %}
+		{{ form_end(mediaForm) }}
+	</div>
+{% endblock %}

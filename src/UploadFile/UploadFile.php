@@ -3,20 +3,23 @@ namespace App\UploadFile;
 
 use App\Entity\Trick;
 use App\Entity\TrickFile;
+use App\Entity\User;
+use App\Entity\UserFile;
 use App\StringTypeChecker\StringTypeChecker;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class UploadFile {
     private StringTypeChecker $stringTypeChecker;
     private RequestStack $requestStack;
-    private array $featuredImageExtension = ["jpeg", "jpg", "png"];
+    private array $imageExtension = ["jpeg", "jpg", "png"];
     private array $trickFileMediaExtension = ["jpeg", "jpg", "png", "mp4"];
     public function __construct(StringTypeChecker $tringTypeChecker, RequestStack $requestStack) {
         $this->requestStack = $requestStack;
         $this->stringTypeChecker = $tringTypeChecker;
     }
-    private function uploadFile(UploadedFile $file): TrickFile
+    private function uploadFile(UploadedFile $file): string
     {
         $fileExtension = $file->guessExtension();
         $fileName = md5(uniqid()). '.' . $fileExtension;
@@ -28,18 +31,17 @@ class UploadFile {
         if($fileExtension === "mp4") {
             $filePath = "<video controls><source src=$filePath></video>";
         }
-        $trickFile = new TrickFile;
-        $trickFile->setPath($filePath);
-        return $trickFile;
+        return $filePath;
     }
     public function addUploadedFeaturedImageFile(UploadedFile $file, Trick $trick): bool
     {
-            if(!in_array($file->guessExtension(), $this->featuredImageExtension)) {
+            if(!in_array($file->guessExtension(), $this->imageExtension)) {
                 return false;
             }
-            // uploadFile method return an instance of TrickFile that already contains file path
-            $featuredImageFile = $this->uploadFile($file);
-            $featuredImageFile->setTypeFile("image")
+            // uploadFile method return path of uploaded file
+            $featuredImageFile = new TrickFile;
+            $featuredImageFile->setPath($this->uploadFile($file))
+            ->setTypeFile("image")
             ->setFeaturedImage(true);
             if($trick->getFeaturedImage()) {
                 $trick->removeFile($trick->getFeaturedImage());
@@ -47,14 +49,25 @@ class UploadFile {
             $trick->addFile($featuredImageFile);
             return true;
     }
+    public function userImageFile(UploadedFile $file): UserFile|bool
+    {
+            if(!in_array($file->guessExtension(), $this->imageExtension)) {
+                return false;
+            }
+            // uploadFile method return path of uploaded file
+            $userImageFile = new UserFile;
+            $userImageFile->setPath($this->uploadFile($file));
+            return $userImageFile;
+    }
     public function addUploadedTrickFile(UploadedFile $file, Trick $trick): bool
     {
         $fileExtension = $file->guessExtension();
         if(!in_array($fileExtension, $this->trickFileMediaExtension)) {
             return false;
         }
-        // uploadFile method return an instance of TrickFile that already contains file path
-        $trickFile = $this->uploadFile($file);
+        // uploadFile method return path of uploaded file
+        $trickFile = new TrickFile;
+        $trickFile->setPath($this->uploadFile($file));
         if ($fileExtension === "mp4") {
             $trickFile->setTypeFile("video");
         }
