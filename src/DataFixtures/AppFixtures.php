@@ -30,7 +30,6 @@ class AppFixtures extends Fixture
         $admin->setEmail("admin@gmail.com")
         ->setUserName("admin")
         ->setPassword($this->hasher->hashPassword($admin, "admin"))
-        ->setValide(true)
         ->setRoles(["ROLE_ADMIN"])
         ->setIsVerified(true);
         $manager->persist($admin);
@@ -50,33 +49,31 @@ class AppFixtures extends Fixture
         $manager->persist($groupeB);
         foreach($snowboardTricks as $i) {
             $trick = new Trick;
-        $trick->setAuthor($admin)
-        ->setName($i->name)
-        ->setSlug($this->sluger->slugify($trick->getName()))
-        ->setDescription($i->description)
-        ->setGroupeId($groupe)
-        ->setCreatedAt(new \DateTime)
-        ->setUpdateAt(new \DateTime);
-        $manager->persist($trick);
-        for($c = 0; $c < count($i->images); $c++) {
-            $trickFile = new TrickFile;
-        $trickFile->setPath($i->images[$c])
-        ->setTrickId($trick)
-        ->setTypeFile("image")
-        ->setFeaturedImage($c === 0);
-        if($c > 4) {
-            $trickFile->setTypeFile("video");
-        }
-        $manager->persist($trickFile);
-        }
-        for($cmt = 0; $cmt < 3; $cmt++) {
+            $trick->setAuthor($admin)
+            ->setName($i->name)
+            ->setSlug($this->sluger->slugify($trick->getName()))
+            ->setDescription($i->description)
+            ->setGroupeId($groupe)
+            ->setCreatedAt(new \DateTime)
+            ->setUpdateAt(new \DateTime);
+            $manager->persist($trick);
+            for($c = 0; $c < count($i->images); $c++) {
+                $trickFile = new TrickFile;
+                $trickFile->setPath($i->images[$c])
+                ->setTrickId($trick)
+                ->setTypeFile("image")
+                ->setFeaturedImage($c === 0);
+                if($c > 4) {
+                    $trickFile->setTypeFile("video");
+                }
+                $manager->persist($trickFile);
+            }
             $comment = new Comment;
             $comment->setAuthor($admin)
             ->setCreatedAt(new \DateTime)
             ->setTrickId($trick)
-            ->setContent("lorem smklkdl sdmnkcdn ejkldczkc dklsjcsklsmkl dsmlkjdslkcdsq smjklcq dsmjcjklqdmilkjc sdkjcqksmldj ksmdjcj skl");
+            ->setContent("Espace de discussion");
             $manager->persist($comment);
-        }
         }
         $manager->flush();
     }

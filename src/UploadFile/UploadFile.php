@@ -94,7 +94,7 @@ class UploadFile {
         }
         return $file;
     }
-    public function addFeaturedImageRef($trick, $ref): bool
+    public function addFeaturedImageRef(Trick $trick, $ref): bool
     {
         if($trick->getFeaturedImage()) {
             $trick->removeFile($trick->getFeaturedImage());

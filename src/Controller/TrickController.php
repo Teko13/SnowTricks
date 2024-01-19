@@ -24,9 +24,8 @@ class TrickController extends AbstractController {
     }
 
     #[Route('/trick/{slug}',name: "trick_show")]
-    function show(Trick $trick): Response
+    public function show(Trick $trick): Response
     {
-        // dd($trick->getComments()->toArray());
         return $this->render("details.html.twig", compact("trick"));
     }
     #[Route('/create/trick/clear', name: "trick_clear")]
@@ -207,7 +206,6 @@ class TrickController extends AbstractController {
             return $this->manageTrick->updateTrick($trick, $data, $session);
         }
         $session->set("trick_edition", $trick);
-        //
         return $this->render("tricks_management/edit_trick_form.html.twig", [
             "detailsForm" => $trickDetailsForm,
             'mediaForm' => $trickFileForm->createView(),

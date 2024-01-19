@@ -43,7 +43,7 @@ class ManageTrick extends AbstractController
             }
             // if not image return error flash message 
             if(!$trick->getFeaturedImage()) {
-            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
+            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image au figure");
             return $this->redirect("/create/trick");
             }
         }
@@ -100,7 +100,7 @@ class ManageTrick extends AbstractController
             // if no image return error flash message 
             if(!$updateTrick->getFeaturedImage()) {
                 $session->set("trick", $trick);
-            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image de mise en avant");
+            $this->addFlash("alert-waring", "Vous devez enregistrer au moins une image au figure");
             return $this->redirect("/edit/trick/".$updateTrick->getSlug());
             }
         }

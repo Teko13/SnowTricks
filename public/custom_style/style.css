@@ -21,12 +21,6 @@ nav.navbar {
     display: none;
 }
 
-#loadMore {
-    display: none;
-    width: fit-content;
-    margin: 1rem auto;
-}
-
 .arrow#down {
     position: absolute;
     color: white;
@@ -95,7 +89,14 @@ nav.navbar {
     height: 100%;
     overflow: hidden;
 }
-
+.img_container img {
+    height: 100%;
+}
+#loadmore {
+    display: block;
+    margin: 1rem auto;
+    width: fit-content;
+}
 .featured_img .trick_name {
     position: absolute;
     width: 100%;
@@ -413,7 +414,7 @@ footer {
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(4, 25%);
+    grid-template-columns: repeat(5, 20%);
     justify-content: center;
     gap: 1rem;
 }
@@ -464,6 +465,9 @@ footer {
     margin: 1rem auto;
     display: none;
 }
+body {
+    padding-top: 8rem;
+}
 
 .trick_file_actions {
     position: absolute;
@@ -482,7 +486,6 @@ footer {
     font-size: 1.5rem;
     cursor: pointer;
 }
-
 .trick_files .trick_file_actions button {
     background: blue;
 }
@@ -535,6 +538,9 @@ footer {
     .home-icon {
         display: inline;
     }
+        body {
+            padding-top: .5rem;
+        }
 
     .site-title {
         display: none;
@@ -544,10 +550,6 @@ footer {
         top: unset;
         margin-bottom: 0 !important;
         bottom: 0;
-    }
-
-    #loadMore {
-        margin-bottom: 5rem;
     }
 
     .cards {
