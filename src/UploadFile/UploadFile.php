@@ -104,7 +104,7 @@ class UploadFile {
         $trick->addFile($file);
         return true;
     }
-    public function addTrickFileRef($trick, $ref): bool
+    public function addTrickFileRef(Trick $trick, $ref): bool
     {
         $file = $this->uploadTrickFileRef($ref);
         if($file === null) {
